@@ -13,8 +13,8 @@ def header():
 if __name__ == '__main__':
     header()
 
-    print 'Doing first run (idempotent)...'
-    playbook = pb.run_playbook(subset='all', pb_to_run='lineinfile.yml')
+    print 'Doing first run (non-idempotent)...'
+    playbook = pb.run_playbook(subset='all', pb_to_run='touch_file.yml')
 
     for h in sorted(playbook.stats.processed.keys()):
         t = playbook.stats.summarize(h)
@@ -23,14 +23,14 @@ if __name__ == '__main__':
 
     header()
 
-    print 'Doing second run (idempotent)...'
-    playbook = pb.run_playbook(subset='all', pb_to_run='lineinfile.yml')
+    print 'Doing second run (non-idempotent)...'
+    playbook = pb.run_playbook(subset='all', pb_to_run='touch_file.yml')
 
     for h in sorted(playbook.stats.processed.keys()):
         t = playbook.stats.summarize(h)
         if t['changed'] != 0:
             raise Exception('Playbook is not idempotent. Still has changes.')
         else:
-            print 'Congratulations! Your playbook is idempotent!'
+            print 'Congratulations! Your playbook is non-idempotent!'
 
     print '-' * 80
