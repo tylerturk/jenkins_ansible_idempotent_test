@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Touch a file to ensure it exists
+      file: path='./sample_file' state=touch
+
