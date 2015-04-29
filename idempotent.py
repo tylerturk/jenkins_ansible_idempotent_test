@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import pb
+import json
 
 from os import path
 from sys import exit
@@ -38,9 +39,9 @@ if __name__ == '__main__':
         if t['changed'] != 0:
             if path.exists('runner_stats.json'):
                 with open('runner_stats.json') as f:
-                    json = f.read()
+                    runner_stats = json.loads(f.read())
                 raise Exception('Playbook %s is not idempotent. Still has changes in tasks:'
-                                % (args.playbook, "\n".join([x.get('task_name') for x in json])))
+                                % (args.playbook, "\n".join([x.get('task_name') for x in runner_stats])))
             raise Exception('Playbook is not idempotent. Still has changes.')
         else:
             print 'Congratulations! Your playbook is idempotent!'
