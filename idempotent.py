@@ -2,6 +2,7 @@
 
 import pb
 
+from os import path
 from sys import exit
 from argparse import ArgumentParser
 
@@ -35,6 +36,11 @@ if __name__ == '__main__':
     for h in sorted(playbook.stats.processed.keys()):
         t = playbook.stats.summarize(h)
         if t['changed'] != 0:
+            if path.exists('runner_stats.json'):
+                with open('runner_stats.json') as f:
+                    json = f.read()
+                raise Exception('Playbook %s is not idempotent. Still has changes in tasks:'
+                                % (args.playbook, "\n".join([x.get('task_name') for x in json])))
             raise Exception('Playbook is not idempotent. Still has changes.')
         else:
             print 'Congratulations! Your playbook is idempotent!'
