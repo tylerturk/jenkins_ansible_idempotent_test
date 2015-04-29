@@ -3,6 +3,7 @@
 import pb
 
 from sys import exit
+from argparse import ArgumentParser
 
 
 def header():
@@ -11,10 +12,15 @@ def header():
 
 
 if __name__ == '__main__':
+    p = ArgumentParser()
+    p.add_argument('-p', '--playbook', default=None, required=True)
+
+    args = p.parse_args()
+
     header()
 
     print 'Doing first run (idempotent)...'
-    playbook = pb.run_playbook(subset='all', pb_to_run='lineinfile.yml')
+    playbook = pb.run_playbook(subset='all', pb_to_run=args.playbook)
 
     for h in sorted(playbook.stats.processed.keys()):
         t = playbook.stats.summarize(h)
@@ -24,7 +30,7 @@ if __name__ == '__main__':
     header()
 
     print 'Doing second run (idempotent)...'
-    playbook = pb.run_playbook(subset='all', pb_to_run='lineinfile.yml')
+    playbook = pb.run_playbook(subset='all', pb_to_run=args.playbook)
 
     for h in sorted(playbook.stats.processed.keys()):
         t = playbook.stats.summarize(h)
