@@ -1,0 +1,34 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Ensure apt-cache is up to date
+      shell: apt-get update
+
+    - name: Ensure apache, wget, and MySQL are installed
+      shell: apt-get -y install apache2 curl mysql-server php5 wget unzip
+      notify:
+        - start apache
+        - start mysql
+
+    - name: Download latest WordPress
+      shell: "wget http://wordpress.org/latest.zip -O latest.zip"
+
+    - name: Unzip WordPress
+      shell: "unzip -d /var/www/html -o latest.zip"
+
+    - name: Show WordPress return code
+      shell: "curl -sI localhost | egrep -o 'HTTP.*'"
+      register: result
+      failed_when: false
+
+  handlers:
+    - name: start apache
+      shell: service apache2 start
+
+    - name: start mysql
+      shell: service mysql start
+
